@@ -1,0 +1,65 @@
+{
+    "image": "ghcr.io/musicalninjas/pyo3-devcontainer",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                // rust
+                "rust-lang.rust-analyzer",
+                // python
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "charliermarsh.ruff",
+                // configs, docs, etc.
+                "DavidAnson.vscode-markdownlint",
+                "tamasfe.even-better-toml"
+                // DISABLE spell checking for now as exclusions not working ... TODO
+                // "streetsidesoftware.code-spell-checker",
+                // "streetsidesoftware.code-spell-checker-british-english"
+            ],
+            "settings": {
+                // rust
+                "rust-analyzer.interpret.tests": true,
+                "rust-analyzer.testExplorer": true,
+                "[rust]": {
+                    "editor.rulers": [
+                        100
+                    ]
+                },
+                // python
+                "python.defaultInterpreterPath": "./.venv/bin/python3",
+                "python.testing.pytestEnabled": true,
+                "[python]": {
+                    "editor.rulers": [
+                        120
+                    ]
+                },
+                // docs
+                "markdownlint.config": {
+                    "MD013": false, // let the editor wrap lines not the author
+                    // multi-paragraph admonitions in mkdocs-material are considered indented code blocks
+                    // see also ... for possible improvements via a plugin:
+                    // - https://github.com/DavidAnson/vscode-markdownlint/issues/180
+                    // - https://github.com/DavidAnson/vscode-markdownlint/issues/302
+                    // - https://github.com/DavidAnson/markdownlint/issues/209
+                    "MD046": false // {"style": "fenced"} leads to errors on codeblocks in admonitions
+                },
+                "[markdown]": {
+                    "editor.tabSize": 2
+                },
+                // DISABLE spell checking for now as exclusions not working ... TODO
+                // "cSpell.language": "en",
+                // "cSpell.checkOnlyEnabledFileTypes": true,
+                // "cSpell.enabledFileTypes": {"markdown": true, "json": false},
+                
+                // shell
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "terminal.integrated.profiles.linux": {
+                    "bash": {
+                        "path": "/usr/bin/bash"
+                    }
+                }
+            }
+        }
+    },
+    "updateContentCommand": "just reset check"
+}
