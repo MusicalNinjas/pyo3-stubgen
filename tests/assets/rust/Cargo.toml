@@ -1,0 +1,12 @@
+[package]
+name = "rust"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "testlib"
+path = "src/lib.rs"
+crate-type = ["cdylib"]  # cdylib required for python import, rlib required for rust tests.
+
+[dependencies]
+pyo3 = "0.21.2"

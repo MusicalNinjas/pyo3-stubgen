@@ -1,0 +1,39 @@
+[project]
+    name = "pypkg"
+    description = "A test package for pyi-gen"
+    # readme = "README.md"
+    license = { text = "MIT" }
+    authors = [{ name = "Mike Foster" }]
+    dynamic = ["version"]
+    requires-python = ">=3.8"
+    classifiers = [
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Intended Audience :: Developers",
+        "Natural Language :: English",
+    ]
+
+[tool.setuptools.dynamic]
+    version = { file = "__pyversion__" }
+
+
+# ===========================
+#       Build, package
+# ===========================
+
+[build-system]
+    requires = ["setuptools", "setuptools-rust"]
+    build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+    where = ["python"]
+
+[[tool.setuptools-rust.ext-modules]]
+    # The last part of the name (e.g. "_lib") has to match lib.name in Cargo.toml,
+    # but you can add a prefix to nest it inside of a Python package.
+    target = "pypkg.testlib"
+    path = "rust/Cargo.toml"
+    binding = "PyO3"
+    features = ["pyo3/extension-module"] # IMPORTANT!!!
