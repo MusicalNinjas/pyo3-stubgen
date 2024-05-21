@@ -2,7 +2,7 @@ from pathlib import Path
 
 from assets.python.pypkg import testlib
 
-from pyigen import generate, genpyi
+from pyigen import generate, genfile, genpyi
 
 
 def test_imported():
@@ -35,3 +35,14 @@ def test_fullpyi():
     with pyipath.open() as pyifile:
         pyi = pyifile.read()
     assert genpyi(testlib) == pyi
+
+def test_outputfile(tmp_path):
+    pyipath = Path("tests/assets/expected.pyi").resolve()
+    with pyipath.open() as pyifile:
+        pyi = pyifile.read()
+    genfile("testlib", tmp_path)
+    outputpath = tmp_path / "testlib.pyi"
+    assert outputpath.is_file()
+    with outputpath.open() as outputfile:
+        output = outputfile.read()
+    assert output == pyi

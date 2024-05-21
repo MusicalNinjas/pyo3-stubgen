@@ -4,6 +4,7 @@ Generate linter hints for functions provided by external compiled modules (e.g. 
 Uses the information in `__doc__` and `__text_signature__` to create suitable content for a `.pyi` file.
 """
 
+from pathlib import Path
 import textwrap
 from types import BuiltinFunctionType, FunctionType, ModuleType
 
@@ -51,3 +52,9 @@ def genpyi(module: ModuleType) -> str:
     definitions = [generate(function) for function in functions if type(function) == BuiltinFunctionType]
     contents = ["# flake8: noqa: PYI021", *sorted(definitions)]
     return "\n".join(contents)
+
+def genfile(module: str, outputlocation: Path) -> None:
+    outputfilename = module + ".pyi"
+    outputpath = outputlocation / outputfilename
+    with outputpath.open("w") as outputfile:
+        ...
