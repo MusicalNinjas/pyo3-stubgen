@@ -34,7 +34,11 @@ jobs:
       uses: taiki-e/install-action@just
     - name: Install dependencies
       run: |
-        just install
+        python -m pip install -U pip
+        pip install .[dev]
+        cd tests/assets
+        pip install .
+        cd ../..
     - name: Test with pytest
       run: |
         pytest
