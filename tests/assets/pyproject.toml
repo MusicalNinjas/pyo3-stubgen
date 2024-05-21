@@ -1,6 +1,6 @@
 [project]
-    name = "pypkg"
-    description = "A test package for pyi-gen"
+    name = "testpkg"
+    description = "A test package for pyigen"
     # readme = "README.md"
     license = { text = "MIT" }
     authors = [{ name = "Mike Foster" }]
@@ -33,7 +33,7 @@
 [[tool.setuptools-rust.ext-modules]]
     # The last part of the name (e.g. "_lib") has to match lib.name in Cargo.toml,
     # but you can add a prefix to nest it inside of a Python package.
-    target = "pypkg.testlib"
+    target = "testpkg.testlib"
     path = "rust/Cargo.toml"
     binding = "PyO3"
     features = ["pyo3/extension-module"] # IMPORTANT!!!

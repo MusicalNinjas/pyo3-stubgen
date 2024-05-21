@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from assets.python.pypkg import testlib  # Used for all tests EXCEPT test_ouptutfile
+from testpkg import testlib  # Used for all tests EXCEPT test_ouptutfile
 
 from pyigen import generate, genfile, genpyi
 
@@ -47,9 +47,9 @@ def test_fullpyi(expected_pyi):
 
 
 def test_outputfile(tmp_path, expected_pyi):
-    genfile("pypkg.testlib", tmp_path)
+    genfile("testpkg.testlib", tmp_path)
 
-    expected_file = tmp_path / "pypkg/testlib.pyi"
+    expected_file = tmp_path / "testpkg/testlib.pyi"
     assert expected_file.is_file()
 
     expected_contents = expected_pyi.read_text()
