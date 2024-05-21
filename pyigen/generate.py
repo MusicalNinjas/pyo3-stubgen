@@ -54,13 +54,9 @@ def genpyi(module: ModuleType) -> str:
     contents = ["# flake8: noqa: PYI021", *sorted(definitions)]
     return "\n".join(contents)
 
-def genfile(module: str, outputlocation: Path) -> None:
-    outputdirs = "/".join(module.split(".")[:-1])
-    outputpath = outputlocation / outputdirs
-    outputpath.mkdir(parents=True)
-    outputfilename = module.split(".")[-1] + ".pyi"
-    outputpath = outputpath / outputfilename
-    module = import_module(module)
+def genfile(modulename: str, outputlocation: Path) -> None:
+    module = import_module(modulename)
     output = genpyi(module)
-    with outputpath.open("w") as outputfile:
-        outputfile.write(output)
+    outputfilepath = outputlocation.joinpath("/".join(modulename.split("."))).with_suffix(".pyi")
+    outputfilepath.parent.mkdir(parents=True, exist_ok=True)
+    outputfilepath.write_text(output)
