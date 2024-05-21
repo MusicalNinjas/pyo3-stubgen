@@ -37,8 +37,10 @@ jobs:
         python -m pip install -U pip
         pip install .[dev]
         cd tests/assets
+        pwd
         pip install .
         cd ../..
+        pwd
     - name: Test with pytest
       run: |
         pytest

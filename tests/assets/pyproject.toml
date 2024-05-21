@@ -28,7 +28,7 @@
     build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-    where = ["./python"]
+    where = ["python"]
 
 [[tool.setuptools-rust.ext-modules]]
     # The last part of the name (e.g. "_lib") has to match lib.name in Cargo.toml,
