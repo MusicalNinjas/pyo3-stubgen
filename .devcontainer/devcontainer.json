@@ -20,6 +20,7 @@
                 // rust
                 "rust-analyzer.interpret.tests": true,
                 "rust-analyzer.testExplorer": true,
+                "rust-analyzer.linkedProjects": ["tests/assets/rust/Cargo.toml"],
                 "[rust]": {
                     "editor.rulers": [
                         100

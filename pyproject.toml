@@ -1,0 +1,112 @@
+[project]
+    name = "pyo3-stubgen"
+    description = "Enable hinting for pyo3 extension modules by generating type and docstring stubs"
+    # readme = "README.md"
+    license = { text = "MIT" }
+    authors = [{ name = "Mike Foster" }]
+    dynamic = ["version"]
+    requires-python = ">=3.8"
+    classifiers = [
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Intended Audience :: Developers",
+        "Natural Language :: English",
+    ]
+
+[project.urls]
+    # Homepage = ""
+    # Documentation = ""
+    Repository = "https://github.com/MusicalNinjas/pyo3-stubgen"
+    Issues = "https://github.com/MusicalNinjas/pyo3-stubgen"
+    # Changelog = ""
+
+[tool.setuptools.dynamic]
+    version = { file = "__pyversion__" }
+
+
+# ===========================
+#       Build, package
+# ===========================
+
+[build-system]
+    requires = ["setuptools"]
+
+[tool.setuptools.packages.find]
+    where = ["."]
+
+# ===========================
+#  Test, lint, documentation
+# ===========================
+
+[project.optional-dependencies]
+    lint = ["ruff"]
+    test = ["pytest", "pytest-doctest-mkdocstrings"]
+    cov = ["pyigen[test]", "pytest-cov"]
+    doc = ["black", "mkdocs", "mkdocstrings[python]", "mkdocs-material"]
+    dev = ["pyo3-stubgen[lint,test,cov,doc]"]
+
+[tool.pytest.ini_options]
+    xfail_strict = true
+    addopts = [
+        "--doctest-modules",
+        "--doctest-mdcodeblocks",
+        "--doctest-glob=*.pyi",
+        "--doctest-glob=*.md",
+    ]
+    testpaths = ["tests", "pyo3_stubgen"]
+
+[tool.coverage.run]
+    branch = true
+    omit = ["tests/*"]
+    dynamic_context = "test_function"
+
+[tool.ruff]
+    line-length = 120
+    format.skip-magic-trailing-comma = false
+    format.quote-style = "double"
+
+[tool.ruff.lint]
+    select = ["ALL"]
+    flake8-pytest-style.fixture-parentheses = false
+    flake8-annotations.mypy-init-return = true
+    extend-ignore = [
+        "E701",   # One-line ifs are not great, one-liners with suppression are worse
+        "ANN101", # Type annotation for `self`
+        "ANN202", # Return type annotation for private functions
+        "ANN401", # Using Any often enough that supressing individually is pointless
+        "W291",   # Double space at EOL is linebreak in md-docstring
+        "W292",   # Too much typing to add newline at end of each file
+        "W293",   # Whitespace only lines are OK for us
+        "D401",   # First line of docstring should be in imperative mood ("Returns ..." is OK, for example)
+        "D203",   # 1 blank line required before class docstring (No thank you, only after the class docstring)
+        "D212",   # Multi-line docstring summary should start at the first line (We start on new line, D209)
+        "D215",   # Section underline is over-indented (No underlines)
+        "D400",   # First line should end with a period (We allow any punctuation, D415)
+        "D406",   # Section name should end with a newline (We use a colon, D416)
+        "D407",   # Missing dashed underline after section (No underlines)
+        "D408",   # Section underline should be in the line following the section's name (No underlines)
+        "D409",   # Section underline should match the length of its name (No underlines)
+        "D413",   # Missing blank line after last section (Not required)
+    ]
+
+[tool.ruff.lint.per-file-ignores]
+    # Additional ignores for tests 
+    "**/test_*.py" = [
+        "INP001",  # Missing __init__.py
+        "ANN",     # Missing type annotations
+        "S101",    # Use of `assert`
+        "PLR2004", # Magic number comparisons are OK in tests
+        "D1",      # Don't REQUIRE docstrings for tests - but they are nice
+    ]
+
+    "**/__init__.py" = [
+        "D104", # Don't require module docstring in __init__.py
+        "F401", # Unused imports are fine: using __init__.py to expose them with implicit __ALL__
+        "F403", # Use `from module import *` to expose all non-_ members
+    ]
+
+    "tests/assets/expected.pyi" = [
+        "ANN001", "ANN201", # Cannot automatically generate type annotations
+    ]

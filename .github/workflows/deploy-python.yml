@@ -1,0 +1,39 @@
+name: Deploy Python
+
+on:
+  workflow_dispatch:
+  push: 
+    tags: "v*"
+
+jobs:
+  python-checks:
+    uses: ./.github/workflows/python.yml
+
+  build:
+    name: Build package
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build
+      run: pipx run build
+    - uses: actions/upload-artifact@v4
+      with:
+        name: pkg
+        path: dist/
+
+  publish:
+    environment: 
+      name: pypi
+      url: https://pypi.org/p/pyo3-stubgen
+    permissions:
+      id-token: write
+    needs: [python-checks, build]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        pattern: pkg
+        path: dist
+        merge-multiple: true
+    - name: Upload to PyPi
+      uses: pypa/gh-action-pypi-publish@release/v1
