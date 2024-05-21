@@ -20,15 +20,15 @@ clean-cov:
     rm -rf pycov
 
 # clean, remove existing .venv and rebuild the venv with pip install -e .[dev]
-reset: clean clean-cov && (install ".venv/bin/")
+reset: clean clean-cov && install
     rm -rf .venv
     python -m venv .venv
 
 # install the project and required dependecies for development & testing
-install venvpath="":
-    {{venvpath}}python -m pip install --upgrade pip 
-    {{venvpath}}pip install -e .[dev]
-    {{venvpath}}pip install tests/assets
+install:
+    .venv/bin/python -m pip install --upgrade pip 
+    .venv/bin/pip install -e .[dev]
+    .venv/bin/pip install tests/assets
 
 # lint python with ruff
 lint:
