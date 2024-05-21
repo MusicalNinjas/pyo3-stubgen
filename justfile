@@ -20,9 +20,12 @@ clean-cov:
     rm -rf pycov
 
 # clean, remove existing .venv and rebuild the venv with pip install -e .[dev]
-reset: clean clean-cov
+reset: clean clean-cov && install
     rm -rf .venv
     python -m venv .venv
+
+# install the project and required dependecies for development & testing
+install:
     .venv/bin/python -m pip install --upgrade pip 
     .venv/bin/pip install -e .[dev]
     .venv/bin/pip install tests/assets
