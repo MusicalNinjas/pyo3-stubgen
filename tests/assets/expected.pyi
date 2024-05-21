@@ -7,7 +7,7 @@ def multiline(left, right):
     """
 
 def minimal(num):
-    """Has a one line docstring and one argument"""
+    """Has a one line docstring and implicit name and signature"""
 
 def no_docstring(num):
     ...

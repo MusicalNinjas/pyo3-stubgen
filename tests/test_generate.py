@@ -4,23 +4,23 @@ from pyigen import generate
 
 
 def test_imported():
-    assert "add" in dir(testlib)
+    assert "multiline" in dir(testlib)
 
 def test_multiline():
-    add_pyi = '''def add(left, right):
+    add_pyi = '''def multiline(left, right):
     """
     Adds two numbers together
 
     Has a multi-line docstring
     """
 '''
-    assert generate(testlib.add) == add_pyi
+    assert generate(testlib.multiline) == add_pyi
 
 def test_oneline():
-    pyi = '''def double(num):
-    """Has a one line docstring and one argument"""
+    pyi = '''def minimal(num):
+    """Has a one line docstring and implicit name and signature"""
 '''
-    assert generate(testlib.double) == pyi
+    assert generate(testlib.minimal) == pyi
 
 def test_no_docstring():
     pyi = '''def no_docstring(num):
