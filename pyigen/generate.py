@@ -4,9 +4,9 @@ Generate linter hints for functions provided by external compiled modules (e.g. 
 Uses the information in `__doc__` and `__text_signature__` to create suitable content for a `.pyi` file.
 """
 
+import textwrap
 from importlib import import_module
 from pathlib import Path
-import textwrap
 from types import BuiltinFunctionType, FunctionType, ModuleType
 
 
@@ -55,8 +55,20 @@ def genpyi(module: ModuleType) -> str:
     return "\n".join(contents)
 
 def genfile(modulename: str, outputlocation: Path) -> None:
+    """
+    Generate a `.pyi` file for `modulename` and store it under the project root `outputlocation`.
+
+    Arguments:
+      modulename: The _fully qualified_ module name: e.g. `pypkg.testlib`. Note: the package must be installed and
+        available for import such as `from pypkg.testlib import ...` but does NOT have to be imported already.
+      outputlocation: The `Path` to the _project root_ where the resulting file should be saved. Note: the file will
+        be stored in a subdirectory based upon the fully qualified module name.
+
+    Example:
+      `genfile("pypkg.testlib", Path("python"))` will result in the creation of `./python/pypkg/testlib.pyi`
+    """
     module = import_module(modulename)
     output = genpyi(module)
-    outputfilepath = outputlocation.joinpath("/".join(modulename.split("."))).with_suffix(".pyi")
-    outputfilepath.parent.mkdir(parents=True, exist_ok=True)
-    outputfilepath.write_text(output)
+    outputfile = outputlocation.joinpath("/".join(modulename.split("."))).with_suffix(".pyi")
+    outputfile.parent.mkdir(parents=True, exist_ok=True)
+    outputfile.write_text(output)
