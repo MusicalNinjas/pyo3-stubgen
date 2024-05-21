@@ -1,6 +1,8 @@
+from pathlib import Path
+
 from assets.python.pypkg import testlib
 
-from pyigen import generate
+from pyigen import generate, genpyi
 
 
 def test_imported():
@@ -27,3 +29,9 @@ def test_no_docstring():
     ...
 '''  # noqa: Q001
     assert generate(testlib.no_docstring) == pyi
+
+def test_fullpyi():
+    pyipath = Path("tests/assets/expected.pyi").resolve()
+    with pyipath.open() as pyifile:
+        pyi = pyifile.read()
+    assert genpyi(testlib) == pyi
