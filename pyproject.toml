@@ -18,8 +18,8 @@
 [project.urls]
     # Homepage = ""
     # Documentation = ""
-    # Repository = "https://github.com/MusicalNinjaDad/fizzbuzz"
-    # Issues = "https://github.com/MusicalNinjaDad/fizzbuzz/issues"
+    Repository = "https://github.com/MusicalNinjas/pyo3-stubgen"
+    Issues = "https://github.com/MusicalNinjas/pyo3-stubgen"
     # Changelog = ""
 
 [tool.setuptools.dynamic]
