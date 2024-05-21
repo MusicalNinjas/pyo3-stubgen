@@ -1,0 +1,31 @@
+name: Coverage
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    paths: 
+      - '.github/workflows/python.yml'
+      - 'codecov.yml'
+
+permissions:
+  id-token: write
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: |
+          just install
+      - name: Test with pytest
+        run: |
+          pytest --cov
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          use_oidc: true
