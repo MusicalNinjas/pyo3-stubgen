@@ -21,3 +21,9 @@ def test_oneline():
     """Has a one line docstring and one argument"""
 '''
     assert generate(testlib.double) == pyi
+
+def test_no_docstring():
+    pyi = '''def no_docstring(num):
+    ...
+'''  # noqa: Q001
+    assert generate(testlib.no_docstring) == pyi
