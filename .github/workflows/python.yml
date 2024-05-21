@@ -34,7 +34,7 @@ jobs:
       uses: taiki-e/install-action@just
     - name: Install dependencies
       run: |
-        just reset
+        just install
     - name: Test with pytest
       run: |
         just test
