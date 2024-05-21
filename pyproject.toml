@@ -17,7 +17,7 @@
 
 [project.urls]
     # Homepage = ""
-    # Documentation = ""
+    Documentation = "https://musicalninjas.github.io/pyo3-stubgen"
     Repository = "https://github.com/MusicalNinjas/pyo3-stubgen"
     Issues = "https://github.com/MusicalNinjas/pyo3-stubgen"
     # Changelog = ""
