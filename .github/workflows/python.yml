@@ -30,6 +30,8 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
+    - name: Setup just
+      uses: taiki-e/install-action@just
     - name: Install dependencies
       run: |
         just install

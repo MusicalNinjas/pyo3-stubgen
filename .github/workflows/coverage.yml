@@ -19,6 +19,8 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Setup just
+        uses: taiki-e/install-action@just
       - name: Install dependencies
         run: |
           just install
