@@ -4,6 +4,7 @@ Generate linter hints for functions provided by external compiled modules (e.g. 
 Uses the information in `__doc__` and `__text_signature__` to create suitable content for a `.pyi` file.
 """
 
+from importlib import import_module
 from pathlib import Path
 import textwrap
 from types import BuiltinFunctionType, FunctionType, ModuleType
@@ -54,7 +55,12 @@ def genpyi(module: ModuleType) -> str:
     return "\n".join(contents)
 
 def genfile(module: str, outputlocation: Path) -> None:
-    outputfilename = module + ".pyi"
-    outputpath = outputlocation / outputfilename
+    outputdirs = "/".join(module.split(".")[:-1])
+    outputpath = outputlocation / outputdirs
+    outputpath.mkdir(parents=True)
+    outputfilename = module.split(".")[-1] + ".pyi"
+    outputpath = outputpath / outputfilename
+    module = import_module(module)
+    output = genpyi(module)
     with outputpath.open("w") as outputfile:
-        ...
+        outputfile.write(output)

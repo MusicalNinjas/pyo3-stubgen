@@ -40,8 +40,8 @@ def test_outputfile(tmp_path):
     pyipath = Path("tests/assets/expected.pyi").resolve()
     with pyipath.open() as pyifile:
         pyi = pyifile.read()
-    genfile("testlib", tmp_path)
-    outputpath = tmp_path / "testlib.pyi"
+    genfile("pypkg.testlib", tmp_path)
+    outputpath = tmp_path / "pypkg/testlib.pyi"
     assert outputpath.is_file()
     with outputpath.open() as outputfile:
         output = outputfile.read()
