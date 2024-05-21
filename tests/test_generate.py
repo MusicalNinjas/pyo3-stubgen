@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from testpkg import testlib  # Used for all tests EXCEPT test_ouptutfile
 
-from pyigen import generate, genfile, genpyi
+from pyo3_stubgen import generate, genfile, genpyi
 
 
 @pytest.fixture

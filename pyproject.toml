@@ -1,6 +1,6 @@
 [project]
-    name = "pyigen"
-    description = ""
+    name = "pyo3-stubgen"
+    description = "Enable hinting for pyo3 extension modules by generating type and docstring stubs"
     # readme = "README.md"
     license = { text = "MIT" }
     authors = [{ name = "Mike Foster" }]
@@ -45,7 +45,7 @@
     test = ["pytest", "pytest-doctest-mkdocstrings"]
     cov = ["pyigen[test]", "pytest-cov"]
     doc = ["black", "mkdocs", "mkdocstrings[python]", "mkdocs-material"]
-    dev = ["pyigen[lint,test,cov,doc]"]
+    dev = ["pyo3-stubgen[lint,test,cov,doc]"]
 
 [tool.pytest.ini_options]
     xfail_strict = true
@@ -55,7 +55,7 @@
         "--doctest-glob=*.pyi",
         "--doctest-glob=*.md",
     ]
-    testpaths = ["tests", "pyigen"]
+    testpaths = ["tests", "pyo3_stubgen"]
 
 [tool.coverage.run]
     branch = true
