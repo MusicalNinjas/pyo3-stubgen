@@ -1,15 +1,15 @@
 use pyo3::prelude::*;
 
-/// Adds two numbers together
+/// Adds two numbers together.
 ///
-/// Has a multi-line docstring
+/// Has a multi-line docstring.
 #[pyfunction]
 #[pyo3(name = "multiline", text_signature = "(left, right)")]
 pub fn multiline(left: usize, right: usize) -> usize {
     left + right
 }
 
-/// Has a one line docstring and implicit name and signature
+/// Has a one line docstring and implicit name and signature.
 #[pyfunction]
 pub fn minimal(num: usize) -> usize {
     num * 2

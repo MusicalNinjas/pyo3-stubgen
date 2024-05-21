@@ -9,16 +9,16 @@ def test_imported():
 def test_multiline():
     add_pyi = '''def multiline(left, right):
     """
-    Adds two numbers together
+    Adds two numbers together.
 
-    Has a multi-line docstring
+    Has a multi-line docstring.
     """
 '''
     assert generate(testlib.multiline) == add_pyi
 
 def test_oneline():
     pyi = '''def minimal(num):
-    """Has a one line docstring and implicit name and signature"""
+    """Has a one line docstring and implicit name and signature."""
 '''
     assert generate(testlib.minimal) == pyi
 
