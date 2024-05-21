@@ -61,6 +61,6 @@
                 }
             }
         }
-    }
-    // "updateContentCommand": "just reset check"
+    },
+    "updateContentCommand": "just reset check"
 }
