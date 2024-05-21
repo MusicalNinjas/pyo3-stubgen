@@ -10,9 +10,11 @@ from pyigen import generate, genfile, genpyi
 def expected_pyi():
     return Path("tests/assets/expected.pyi").resolve()
 
+
 def test_imported():
     """Sanity check that we have built and imported testlib."""
     assert "multiline" in dir(testlib)
+
 
 def test_multiline():
     pyi = '''def multiline(left, right):
@@ -24,25 +26,29 @@ def test_multiline():
 '''
     assert generate(testlib.multiline) == pyi
 
+
 def test_oneline():
     pyi = '''def minimal(num):
     """Has a one line docstring and implicit name and signature."""
 '''
     assert generate(testlib.minimal) == pyi
 
+
 def test_no_docstring():
-    pyi = '''def no_docstring(num):
+    pyi = """def no_docstring(num):
     ...
-'''  # noqa: Q001
+"""
     assert generate(testlib.no_docstring) == pyi
+
 
 def test_fullpyi(expected_pyi):
     pyi = expected_pyi.read_text()
     assert genpyi(testlib) == pyi
 
+
 def test_outputfile(tmp_path, expected_pyi):
     genfile("pypkg.testlib", tmp_path)
-    
+
     expected_file = tmp_path / "pypkg/testlib.pyi"
     assert expected_file.is_file()
 
