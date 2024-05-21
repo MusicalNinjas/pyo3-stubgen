@@ -1,22 +1,28 @@
 from pathlib import Path
 
-from assets.python.pypkg import testlib
+import pytest
+from assets.python.pypkg import testlib  # Used for all tests EXCEPT test_ouptutfile
 
 from pyigen import generate, genfile, genpyi
 
 
+@pytest.fixture
+def expected_pyi():
+    return Path("tests/assets/expected.pyi").resolve()
+
 def test_imported():
+    """Sanity check that we have built and imported testlib."""
     assert "multiline" in dir(testlib)
 
 def test_multiline():
-    add_pyi = '''def multiline(left, right):
+    pyi = '''def multiline(left, right):
     """
     Adds two numbers together.
 
     Has a multi-line docstring.
     """
 '''
-    assert generate(testlib.multiline) == add_pyi
+    assert generate(testlib.multiline) == pyi
 
 def test_oneline():
     pyi = '''def minimal(num):
@@ -30,19 +36,16 @@ def test_no_docstring():
 '''  # noqa: Q001
     assert generate(testlib.no_docstring) == pyi
 
-def test_fullpyi():
-    pyipath = Path("tests/assets/expected.pyi").resolve()
-    with pyipath.open() as pyifile:
-        pyi = pyifile.read()
+def test_fullpyi(expected_pyi):
+    pyi = expected_pyi.read_text()
     assert genpyi(testlib) == pyi
 
-def test_outputfile(tmp_path):
-    pyipath = Path("tests/assets/expected.pyi").resolve()
-    with pyipath.open() as pyifile:
-        pyi = pyifile.read()
+def test_outputfile(tmp_path, expected_pyi):
     genfile("pypkg.testlib", tmp_path)
-    outputpath = tmp_path / "pypkg/testlib.pyi"
-    assert outputpath.is_file()
-    with outputpath.open() as outputfile:
-        output = outputfile.read()
-    assert output == pyi
+    
+    expected_file = tmp_path / "pypkg/testlib.pyi"
+    assert expected_file.is_file()
+
+    expected_contents = expected_pyi.read_text()
+    output = expected_file.read_text()
+    assert output == expected_contents
