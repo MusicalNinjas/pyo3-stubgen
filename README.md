@@ -1,5 +1,6 @@
-"""
-pyigen generates `.pyi` typing files for extension modules.
+# pyo3-stubgen
+
+`pyo3-stubgen` generates `.pyi` typing files for extension modules which were written in rust with pyo3.
 
 It is designed to work for extension modules created in rust with pyo3 but should work with any compiled extension
 modules which include a `__text_signature__` and optionally a `__doc__` attribute for functions.
@@ -14,7 +15,3 @@ You will need to manually add the typing information to the generated files as t
 function attributes available.
 
 Currently `pyo3_stubgen` only generates info for functions. Classes are on the to-do list.
-
-"""
-
-from .generate import *
