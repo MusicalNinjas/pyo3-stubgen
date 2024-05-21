@@ -1,7 +1,7 @@
 [project]
     name = "pyo3-stubgen"
     description = "Enable hinting for pyo3 extension modules by generating type and docstring stubs"
-    # readme = "README.md"
+    readme = "README.md"
     license = { text = "MIT" }
     authors = [{ name = "Mike Foster" }]
     dynamic = ["version"]
