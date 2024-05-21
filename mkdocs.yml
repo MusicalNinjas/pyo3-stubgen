@@ -1,0 +1,69 @@
+site_name: "pyo3-stubgen"
+repo_url: https://github.com/MusicalNinjas/pyo3-stubgen
+repo_name: MusicalNinjas/pyo3-stubgen
+
+watch:
+- pyo3_stubgen # To update live preview when docstrings change
+
+theme:
+  name: "material"
+  icon:
+    logo: simple/livechat
+  palette: # Palette toggles for auto-light-dark mode
+  - media: "(prefers-color-scheme)"
+    toggle:
+      icon: material/link
+      name: Switch to light mode
+  - media: "(prefers-color-scheme: light)"
+    scheme: default 
+    toggle:
+      icon: material/toggle-switch
+      name: Switch to dark mode
+  - media: "(prefers-color-scheme: dark)"
+    scheme: slate
+    toggle:
+      icon: material/toggle-switch-off-outline
+      name: Switch to system preference
+  features:
+    - navigation.expand
+    - navigation.path
+    - navigation.tabs
+    - toc.integrate
+    - navigation.indexes
+
+plugins:
+- search
+- mkdocstrings:
+    handlers:
+      python:
+        options:
+          members: true
+          show_bases: false
+          show_root_heading: true
+          heading_level: 2
+          show_root_full_path: false
+          show_symbol_type_toc: true
+          show_symbol_type_heading: true
+          signature_crossrefs: true
+          separate_signature: true
+          show_signature_annotations: true
+          docstring_section_style: spacy
+          docstring_options:
+            ignore_init_summary: true
+          merge_init_into_class: true
+
+markdown_extensions:
+- admonition
+- pymdownx.details
+- pymdownx.highlight
+- pymdownx.inlinehilite
+- pymdownx.snippets:
+    url_download: true
+- pymdownx.superfences:
+- attr_list
+- pymdownx.emoji:
+    emoji_index: !!python/name:material.extensions.emoji.twemoji
+    emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - index.md

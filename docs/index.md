@@ -1,0 +1,1 @@
+::: pyo3_stubgen
