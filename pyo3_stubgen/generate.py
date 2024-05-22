@@ -9,8 +9,10 @@ from importlib import import_module
 from pathlib import Path
 from types import BuiltinFunctionType, FunctionType, ModuleType
 
+import click
 
-def generate(function: FunctionType) -> str:
+
+def genentry(function: FunctionType) -> str:
     """
     Generate the signature and docstring information for a given function.
 
@@ -50,7 +52,7 @@ def genpyi(module: ModuleType) -> str:
     to the `.pyi` file afterwards.
     """
     functions = [getattr(module,function) for function in dir(module)]
-    definitions = [generate(function) for function in functions if type(function) == BuiltinFunctionType]
+    definitions = [genentry(function) for function in functions if type(function) == BuiltinFunctionType]
     contents = ["# flake8: noqa: PYI021", *sorted(definitions)]
     return "\n".join(contents)
 
@@ -59,16 +61,43 @@ def genfile(modulename: str, outputlocation: Path) -> None:
     Generate a `.pyi` file for `modulename` and store it under the project root `outputlocation`.
 
     Arguments:
-      modulename: The _fully qualified_ module name: e.g. `pypkg.testlib`. Note: the package must be installed and
-        available for import such as `from pypkg.testlib import ...` but does NOT have to be imported already.
-      outputlocation: The `Path` to the _project root_ where the resulting file should be saved. Note: the file will
-        be stored in a subdirectory based upon the fully qualified module name.
+      modulename: The _fully qualified_ module name: e.g. `pypkg.rustlib`.
+      outputlocation: The `Path` to the _project root_ where the resulting file should be saved. Note: 
 
     Example:
-      `genfile("pypkg.testlib", Path("python"))` will result in the creation of `./python/pypkg/testlib.pyi`
+      `genfile("pypkg.rustlib", Path("python"))` will result in the creation of `./python/pypkg/rustlib.pyi`
+
+    Note:
+      - the package containing modulename must be installed and available for import such as
+      `from pypkg.rustlib import ...` but does NOT have to be imported already.
+      - the output file will be stored in a subdirectory based upon the fully qualified module name.
     """
     module = import_module(modulename)
     output = genpyi(module)
     outputfile = outputlocation.joinpath("/".join(modulename.split("."))).with_suffix(".pyi")
     outputfile.parent.mkdir(parents=True, exist_ok=True)
     outputfile.write_text(output)
+
+# Dedicated shim function to allow for specific formatting and contents of docstrings (IDE & API docs vs. CLI --help)
+@click.command()
+@click.argument("modulename")
+@click.argument("outputlocation", type=click.Path(file_okay=False, resolve_path=True, path_type=Path))
+def _stubgen(modulename: str, outputlocation: Path) -> None:  # noqa: D417
+    """
+    Generate a `.pyi` file for MODULENAME and store it under the project root OUTPUTLOCATION.
+
+    Arguments:
+    
+      MODULENAME: The _fully qualified_ module name: e.g. `pypkg.rustlib`.
+
+          Note: the package containing modulename must be installed in your working environment.
+
+      OUTPUTLOCATION: The path to the project root where the resulting file should be saved.
+
+          Note: the output file will be stored in a subdirectory based upon the fully qualified module name.
+
+    Example:
+
+      `stubgen pypkg.rustlib python` creates `./python/pypkg/rustlib.pyi`
+    """  # noqa: D412
+    genfile(modulename, outputlocation)

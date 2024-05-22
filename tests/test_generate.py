@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from testpkg import testlib  # Used for all tests EXCEPT test_ouptutfile
 
-from pyo3_stubgen import generate, genfile, genpyi
+from pyo3_stubgen import genentry, genfile, genpyi
 
 
 @pytest.fixture
@@ -24,21 +24,21 @@ def test_multiline():
     Has a multi-line docstring.
     """
 '''
-    assert generate(testlib.multiline) == pyi
+    assert genentry(testlib.multiline) == pyi
 
 
 def test_oneline():
     pyi = '''def minimal(num):
     """Has a one line docstring and implicit name and signature."""
 '''
-    assert generate(testlib.minimal) == pyi
+    assert genentry(testlib.minimal) == pyi
 
 
 def test_no_docstring():
     pyi = """def no_docstring(num):
     ...
 """
-    assert generate(testlib.no_docstring) == pyi
+    assert genentry(testlib.no_docstring) == pyi
 
 
 def test_fullpyi(expected_pyi):
