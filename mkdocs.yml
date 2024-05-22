@@ -27,7 +27,6 @@ theme:
   features:
     - navigation.expand
     - navigation.path
-    - navigation.tabs
     - toc.integrate
     - navigation.indexes
 
@@ -67,3 +66,4 @@ markdown_extensions:
 
 nav:
   - index.md
+  - python-api.md
