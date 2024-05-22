@@ -20,8 +20,8 @@
     # Homepage = ""
     Documentation = "https://musicalninjas.github.io/pyo3-stubgen"
     Repository = "https://github.com/MusicalNinjas/pyo3-stubgen"
-    Issues = "https://github.com/MusicalNinjas/pyo3-stubgen"
-    # Changelog = ""
+    Issues = "https://github.com/MusicalNinjas/pyo3-stubgen/issues"
+    Changelog = "https://github.com/MusicalNinjas/pyo3-stubgen/blob/main/CHANGELOG.md"
 
 [tool.setuptools.dynamic]
     version = { file = "__pyversion__" }
