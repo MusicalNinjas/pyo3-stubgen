@@ -36,4 +36,4 @@ Alternatively via the python API. See [the docs](https://musicalninjas.github.io
 
 ## Issues, Bugs, Ideas
 
-Please contribute on github [MusicalNinjas/pyo3-stubgen](https://github.com/MusicalNinjas/py03-stubgen).
+Please contribute on github [MusicalNinjas/pyo3-stubgen](https://github.com/MusicalNinjas/pyo3-stubgen).
