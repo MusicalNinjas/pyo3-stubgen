@@ -105,9 +105,7 @@
     ]
 
     "**/__init__.py" = [
-        "D104", # Don't require module docstring in __init__.py
         "F401", # Unused imports are fine: using __init__.py to expose them with implicit __ALL__
-        "F403", # Use `from module import *` to expose all non-_ members
     ]
 
     "tests/assets/expected.pyi" = [

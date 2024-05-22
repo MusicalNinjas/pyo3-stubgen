@@ -17,4 +17,4 @@ Currently `pyo3_stubgen` only generates info for functions. Classes are on the t
 
 """
 
-from .generate import *
+from .generate import genentry, genfile, genpyi
