@@ -31,6 +31,7 @@ def parse_numpydoc_type(typestr: str) -> str:
     # Convert numpydoc types to python types
     typestr = typestr.replace(" or ", " | ")
     typestr = re.sub(r"{([^}]+)}", r"Literal[\1]", typestr)
+    typestr = typestr.replace(", optional", " | None")
     return typestr
 
 def parse_signature(sig: str, docstr: str | None, *, method: bool = False, 
@@ -82,7 +83,8 @@ def parse_signature(sig: str, docstr: str | None, *, method: bool = False,
     newargs.append(argname + (f": {argtype}" if argtype else "") + (f" = {argdef}" if argdef else ""))
   
   rettype = None
-  if nd and (r := nd["Returns"]):
+  if nd:
+    r = nd["Returns"]
     if (len(r) == 1) and (rt := r[0].type):
       rettype = parse_numpydoc_type(rt)
     elif len(r) > 1:
@@ -93,9 +95,11 @@ def parse_signature(sig: str, docstr: str | None, *, method: bool = False,
         else:
           rettypes.append("Any")
       rettype: LiteralString = f"tuple[{', '.join(rettypes)}]"
+    elif len(r) == 0:
+      rettype = "None"
 
 
-  ret = f" -> {r[0].type}" if rettype else ""
+  ret = f" -> {rettype}" if rettype else ""
 
   return f"({', '.join(newargs)}){ret}", decorator
 
