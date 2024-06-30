@@ -28,7 +28,7 @@
     version = { file = "__pyversion__" }
 
 [project.scripts]
-    stubgen = "pyo3_stubgen:generate._stubgen"
+    pyo3-stubgen = "pyo3_stubgen:generate._stubgen"
 
 # ===========================
 #       Build, package
