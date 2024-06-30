@@ -50,6 +50,9 @@ Easiest from the command line:
 
 Alternatively via the python API. See [the docs](https://musicalninjas.github.io/pyo3-stubgen) for more details.
 
+??? note "Changes"
+    - v0.3.0: renamed shell command to `pyo3-stubgen`
+
 ## Issues, Bugs, Ideas
 
 Please contribute on github [MusicalNinjas/pyo3-stubgen](https://github.com/MusicalNinjas/pyo3-stubgen).
