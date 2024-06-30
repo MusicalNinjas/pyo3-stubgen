@@ -27,10 +27,10 @@ Install via pip:
 Easiest from the command line:
 
 ```sh
-(.venv)/projectroot$ stubgen MODULENAME OUTPUTLOCATION
+(.venv)/projectroot$ pyo3-stubgen MODULENAME OUTPUTLOCATION
 ```
 
-See `stubgen --help` for more details
+See `pyo3-stubgen --help` for more details
 
 Alternatively via the python API. See [the docs](https://musicalninjas.github.io/pyo3-stubgen) for more details.
 

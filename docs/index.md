@@ -26,10 +26,10 @@ Install via pip:
 Easiest from the command line:
 
 ```sh
-(.venv)/projectroot$ stubgen MODULENAME OUTPUTLOCATION
+(.venv)/projectroot$ pyo3-stubgen MODULENAME OUTPUTLOCATION
 ```
 
-??? tip "`stubgen --help`"
+??? tip "`pyo3-stubgen --help`"
     ```text
     Generate a `.pyi` file for MODULENAME and store it under the project root OUTPUTLOCATION.
 
@@ -45,10 +45,13 @@ Easiest from the command line:
 
     Example:
 
-      `stubgen pypkg.rustlib python` creates `./python/pypkg/rustlib.pyi`
+      `pyo3-stubgen pypkg.rustlib python` creates `./python/pypkg/rustlib.pyi`
     ```
 
 Alternatively via the python API. See [the docs](https://musicalninjas.github.io/pyo3-stubgen) for more details.
+
+??? note "Changes"
+    - v0.3.0: renamed shell command to `pyo3-stubgen`
 
 ## Issues, Bugs, Ideas
 

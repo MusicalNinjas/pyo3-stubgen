@@ -98,6 +98,6 @@ def _stubgen(modulename: str, outputlocation: Path) -> None:  # noqa: D417
 
     Example:
 
-      `stubgen pypkg.rustlib python` creates `./python/pypkg/rustlib.pyi`
+      `pyo3-stubgen pypkg.rustlib python` creates `./python/pypkg/rustlib.pyi`
     """  # noqa: D412
     genfile(modulename, outputlocation)

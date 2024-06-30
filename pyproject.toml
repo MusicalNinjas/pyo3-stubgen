@@ -28,7 +28,7 @@
     version = { file = "__pyversion__" }
 
 [project.scripts]
-    stubgen = "pyo3_stubgen:generate._stubgen"
+    pyo3-stubgen = "pyo3_stubgen:generate._stubgen"
 
 # ===========================
 #       Build, package
@@ -47,7 +47,7 @@
 [project.optional-dependencies]
     lint = ["ruff"]
     test = ["pytest", "pytest-doctest-mkdocstrings"]
-    cov = ["pyigen[test]", "pytest-cov"]
+    cov = ["pyo3-stubgen[test]", "pytest-cov"]
     doc = ["black", "mkdocs", "mkdocstrings[python]", "mkdocs-material"]
     dev = ["pyo3-stubgen[lint,test,cov,doc]"]
 
