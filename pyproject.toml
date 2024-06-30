@@ -47,7 +47,7 @@
 [project.optional-dependencies]
     lint = ["ruff"]
     test = ["pytest", "pytest-doctest-mkdocstrings"]
-    cov = ["pyigen[test]", "pytest-cov"]
+    cov = ["pyo3-stubgen[test]", "pytest-cov"]
     doc = ["black", "mkdocs", "mkdocstrings[python]", "mkdocs-material"]
     dev = ["pyo3-stubgen[lint,test,cov,doc]"]
 
