@@ -7,7 +7,7 @@ Uses the information in `__doc__` and `__text_signature__` to create suitable co
 import textwrap
 from importlib import import_module
 from pathlib import Path
-from types import BuiltinFunctionType, FunctionType, ModuleType, MethodDescriptorType, BuiltinMethodType
+from types import BuiltinFunctionType, FunctionType, ModuleType, MethodDescriptorType, BuiltinMethodType, GetSetDescriptorType
 from typing import Any
 
 import click
@@ -82,6 +82,16 @@ def gen_function_entry(function: FunctionType | MethodDescriptorType | BuiltinFu
     
     return f"{decorator}\n{s}" if decorator is not None else s
 
+def gen_property_entry(descriptor: GetSetDescriptorType) -> str:
+    if descriptor.__doc__:
+        if "\n" in descriptor.__doc__:
+            doc = f'    """\n{textwrap.indent(descriptor.__doc__,"    ")}\n    """'
+        else:
+            doc = f'    """{descriptor.__doc__}"""'
+    else:
+        doc = "    ..."  # noqa: Q000
+    return (f"@property\ndef {descriptor.__name__}(self):\n{doc}\n\n"
+            f"@{descriptor.__name__}.setter\ndef {descriptor.__name__}(self, value) -> None:\n    ...\n")
 
 def gen_class_entry(cls: type) -> str:
     """
@@ -95,13 +105,16 @@ def gen_class_entry(cls: type) -> str:
     """
     dir_contents = [getattr(cls, function) for function in dir(cls)]
     
-    methods = [
-        textwrap.indent(gen_function_entry(function, method=True), "    ")
-        for function in dir_contents
-        if (type(function) in (MethodDescriptorType, BuiltinMethodType)) and
-        hasattr(function, "__text_signature__") and
-        not function.__name__.startswith("__")
-    ]
+    methods: list[str] = []
+    
+    for dir_entry in dir_contents:
+        if (type(dir_entry) in (MethodDescriptorType, BuiltinMethodType) 
+            and hasattr(dir_entry, "__text_signature__") 
+            and not dir_entry.__name__.startswith("__")):
+            methods.append(textwrap.indent(gen_function_entry(dir_entry, method=True), "    "))
+        elif (type(dir_entry) == GetSetDescriptorType and not dir_entry.__name__.startswith("__")):
+            methods.append(textwrap.indent(gen_property_entry(dir_entry), "    "))        
+      
 
     if cls.__doc__:
         if "\n" in cls.__doc__:
