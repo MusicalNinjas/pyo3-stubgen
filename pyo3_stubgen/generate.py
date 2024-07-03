@@ -15,7 +15,7 @@ import click
 FUNCTION_TYPES = (BuiltinFunctionType, MethodDescriptorType, BuiltinMethodType)
 SUPPORTED_TYPES = (*FUNCTION_TYPES, type)
 
-def parse_signature(sig: str, docstr: str | None) -> str:
+def parse_signature(sig: str, docstr: str | None, method: bool = False) -> tuple[str, str | None]:
   """
   Parse the signature and docstring to generate a function signature.
   
@@ -28,22 +28,33 @@ def parse_signature(sig: str, docstr: str | None) -> str:
   """
   args = [x.strip() for x in sig.strip(" ()").split(", ")]
   
+  decorator: str | None = None
+  if method:
+    # We presume static, and change when a $self or $cls is present.
+    decorator = "@staticmethod"
+  
   newargs = []
   for argstr in args:
     spl = argstr.split("=")
     argname = spl[0]
     if argname == "$self":
       argname = "self"
+      if method:
+        decorator = None
+    elif argname == "$cls":
+      argname = "cls"
+      if method:
+        decorator = "@classmethod"
     argdef = spl[1] if len(spl) == 2 else None
     
     argtype = None
     
     newargs.append(argname + (f": {argtype}" if argtype else "") + (f" = {argdef}" if argdef else ""))
     
-  return f"({', '.join(newargs)})"
+  return f"({', '.join(newargs)})", decorator
   
 
-def gen_function_entry(function: FunctionType | MethodDescriptorType | BuiltinFunctionType) -> str:
+def gen_function_entry(function: FunctionType | MethodDescriptorType | BuiltinFunctionType, method: bool = False) -> str:
     """
     Generate the signature and docstring information for a given function.
 
@@ -65,9 +76,11 @@ def gen_function_entry(function: FunctionType | MethodDescriptorType | BuiltinFu
     else:
         doc = "    ..."  # noqa: Q000
         
-    signature = parse_signature(function.__text_signature__, function.__doc__)
+    signature, decorator = parse_signature(function.__text_signature__, function.__doc__, method=method)
         
-    return f"def {function.__name__}{signature}:\n{doc}\n"
+    s = f"def {function.__name__}{signature}:\n{doc}\n"
+    
+    return f"{decorator}\n{s}" if decorator is not None else s
 
 
 def gen_class_entry(cls: type) -> str:
@@ -83,7 +96,7 @@ def gen_class_entry(cls: type) -> str:
     dir_contents = [getattr(cls, function) for function in dir(cls)]
     
     methods = [
-        textwrap.indent(gen_function_entry(function), "    ")
+        textwrap.indent(gen_function_entry(function, method=True), "    ")
         for function in dir_contents
         if (type(function) in (MethodDescriptorType, BuiltinMethodType)) and
         hasattr(function, "__text_signature__") and
