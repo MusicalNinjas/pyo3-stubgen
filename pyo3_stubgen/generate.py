@@ -7,18 +7,60 @@ Uses the information in `__doc__` and `__text_signature__` to create suitable co
 import textwrap
 from importlib import import_module
 from pathlib import Path
-from types import BuiltinFunctionType, FunctionType, ModuleType
+from types import BuiltinFunctionType, FunctionType, ModuleType, MethodDescriptorType, BuiltinMethodType, GetSetDescriptorType
+from typing import Any
 
 import click
 
+FUNCTION_TYPES = (BuiltinFunctionType, MethodDescriptorType, BuiltinMethodType)
+SUPPORTED_TYPES = (*FUNCTION_TYPES, type)
 
-def genentry(function: FunctionType) -> str:
+def parse_signature(sig: str, docstr: str | None, method: bool = False) -> tuple[str, str | None]:
+  """
+  Parse the signature and docstring to generate a function signature.
+  
+  Arguments:
+    sig: the signature string from `__text_signature__`
+    docstr: the docstring from `__doc__`
+    
+  Returns:
+    A string starting from "(" and ending before ":"
+  """
+  args = [x.strip() for x in sig.strip(" ()").split(", ")]
+  
+  decorator: str | None = None
+  if method:
+    # We presume static, and change when a $self or $cls is present.
+    decorator = "@staticmethod"
+  
+  newargs = []
+  for argstr in args:
+    spl = argstr.split("=")
+    argname = spl[0]
+    if argname == "$self":
+      argname = "self"
+      if method:
+        decorator = None
+    elif argname == "$cls":
+      argname = "cls"
+      if method:
+        decorator = "@classmethod"
+    argdef = spl[1] if len(spl) == 2 else None
+    
+    argtype = None
+    
+    newargs.append(argname + (f": {argtype}" if argtype else "") + (f" = {argdef}" if argdef else ""))
+    
+  return f"({', '.join(newargs)})", decorator
+  
+
+def gen_function_entry(function: FunctionType | MethodDescriptorType | BuiltinFunctionType, method: bool = False) -> str:
     """
     Generate the signature and docstring information for a given function.
 
     Arguments:
       function: the function to generate.
-      
+
     Note:
       - function _must_ provide `function.__text_signature__`
       - If `function.__doc__` is present this will be used to generate a docstring hint
@@ -32,8 +74,80 @@ def genentry(function: FunctionType) -> str:
         else:
             doc = f'    """{function.__doc__}"""'
     else:
-        doc = '    ...'  # noqa: Q000
-    return f"def {function.__name__}{function.__text_signature__}:\n{doc}\n"
+        doc = "    ..."  # noqa: Q000
+        
+    signature, decorator = parse_signature(function.__text_signature__, function.__doc__, method=method)
+        
+    s = f"def {function.__name__}{signature}:\n{doc}\n"
+    
+    return f"{decorator}\n{s}" if decorator is not None else s
+
+def gen_property_entry(descriptor: GetSetDescriptorType) -> str:
+    if descriptor.__doc__:
+        if "\n" in descriptor.__doc__:
+            doc = f'    """\n{textwrap.indent(descriptor.__doc__,"    ")}\n    """'
+        else:
+            doc = f'    """{descriptor.__doc__}"""'
+    else:
+        doc = "    ..."  # noqa: Q000
+    return (f"@property\ndef {descriptor.__name__}(self):\n{doc}\n\n"
+            f"@{descriptor.__name__}.setter\ndef {descriptor.__name__}(self, value) -> None:\n    ...\n")
+
+def gen_class_entry(cls: type) -> str:
+    """
+    Generate the signature and docstring information for a given class.
+
+    Arguments:
+      cls: the class to generate
+
+    Returns:
+      A string suitable for inclusion in a `.pyi` file
+    """
+    dir_contents = [getattr(cls, function) for function in dir(cls)]
+    
+    methods: list[str] = []
+    
+    for dir_entry in dir_contents:
+        if (type(dir_entry) in (MethodDescriptorType, BuiltinMethodType) 
+            and hasattr(dir_entry, "__text_signature__") 
+            and not dir_entry.__name__.startswith("__")):
+            methods.append(textwrap.indent(gen_function_entry(dir_entry, method=True), "    "))
+        elif (type(dir_entry) == GetSetDescriptorType and not dir_entry.__name__.startswith("__")):
+            methods.append(textwrap.indent(gen_property_entry(dir_entry), "    "))        
+      
+
+    if cls.__doc__:
+        if "\n" in cls.__doc__:
+            doc = f'    """\n{textwrap.indent(cls.__doc__,"    ")}\n    """'
+        else:
+            doc = f'    """{cls.__doc__}"""'
+    elif not methods:
+        doc = "    ..."  # noqa: Q000
+    else:
+        doc = ""
+    doc += "\n" + "\n".join(methods)
+    return f"class {cls.__name__}:\n{doc}\n"
+
+def genentry(obj: Any) -> str:
+    """
+    Generate the signature and docstring information for a given function or class.
+
+    Arguments:
+      obj: the object to use to generate the entry
+
+    Note:
+      - functions _must_ provide `function.__text_signature__`
+      - If `function.__doc__` is present this will be used to generate a docstring hint
+
+    Returns:
+      A string suitable for inclusion in a `.pyi` file
+    """
+    if type(obj) in FUNCTION_TYPES:
+        return gen_function_entry(obj)
+    if type(obj) == type:
+        return gen_class_entry(obj)
+    msg = f"Unsupported type {type(obj)}"
+    raise ValueError(msg)
 
 def genpyi(module: ModuleType) -> str:
     """
@@ -51,8 +165,8 @@ def genpyi(module: ModuleType) -> str:
     - _No type information_ is usually provided in the `__text_signature__` so you will need to add this manually 
     to the `.pyi` file afterwards.
     """
-    functions = [getattr(module,function) for function in dir(module)]
-    definitions = [genentry(function) for function in functions if type(function) == BuiltinFunctionType]
+    objs = [getattr(module, obj) for obj in dir(module)]
+    definitions = [genentry(obj) for obj in objs if type(obj) in SUPPORTED_TYPES]
     contents = ["# flake8: noqa: PYI021", *sorted(definitions)]
     return "\n".join(contents)
 
