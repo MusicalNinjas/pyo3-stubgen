@@ -135,16 +135,25 @@ def gen_function_entry(function: FunctionType | MethodDescriptorType | BuiltinFu
     
     return f"{decorator}\n{s}" if decorator is not None else s
 
-def gen_property_entry(descriptor: GetSetDescriptorType) -> str:
+def gen_property_entry(descriptor: GetSetDescriptorType, *, parse_types: ParseTypesType = False) -> str:
+    proptype: str | None = None
     if descriptor.__doc__:
         if "\n" in descriptor.__doc__:
             doc = f'    """\n{textwrap.indent(descriptor.__doc__,"    ")}\n    """'
         else:
             doc = f'    """{descriptor.__doc__}"""'
+        if parse_types == 'numpydoc':
+          m = re.match(r"^([^:]+):", descriptor.__doc__)
+          if m:
+              proptype = m[1].strip()
     else:
         doc = "    ..."  # noqa: Q000
-    return (f"@property\ndef {descriptor.__name__}(self):\n{doc}\n\n"
-            f"@{descriptor.__name__}.setter\ndef {descriptor.__name__}(self, value) -> None:\n    ...\n")
+    
+    ret = f"-> {proptype}" if proptype is not None else ""
+    valtypestr = f": {proptype}" if proptype is not None else ""
+    
+    return (f"@property\ndef {descriptor.__name__}(self){ret}:\n{doc}\n\n"
+            f"@{descriptor.__name__}.setter\ndef {descriptor.__name__}(self, value{valtypestr}) -> None:\n    ...\n")
 
 def gen_class_entry(cls: type, *, parse_types: ParseTypesType = False) -> str:
     """
@@ -166,7 +175,7 @@ def gen_class_entry(cls: type, *, parse_types: ParseTypesType = False) -> str:
             and not dir_entry.__name__.startswith("__")):
             methods.append(textwrap.indent(gen_function_entry(dir_entry, method=True, parse_types=parse_types), "    "))
         elif (type(dir_entry) == GetSetDescriptorType and not dir_entry.__name__.startswith("__")):
-            methods.append(textwrap.indent(gen_property_entry(dir_entry), "    "))        
+            methods.append(textwrap.indent(gen_property_entry(dir_entry, parse_types=parse_types), "    "))        
 
     if cls.__doc__:
         if "\n" in cls.__doc__:
